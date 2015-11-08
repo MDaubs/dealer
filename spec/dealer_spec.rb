@@ -11,12 +11,12 @@ describe Dealer do
     sleep 0.1
 
     # Each player sees seven cards in their hand
-    expect(player1.game_state[:card_locations]).to include a_hash_including(id: "player/#{player1.player_id}/hand", cards: card_faces(7))
-    expect(player2.game_state[:card_locations]).to include a_hash_including(id: "player/#{player2.player_id}/hand", cards: card_faces(7))
+    expect(player1.card_locations).to include a_hash_including(id: "player/#{player1.player_id}/hand", cards: card_faces(7))
+    expect(player2.card_locations).to include a_hash_including(id: "player/#{player2.player_id}/hand", cards: card_faces(7))
 
     # Each player sees the back of the other players hand
-    expect(player1.game_state[:card_locations]).to include a_hash_including(id: "player/#{player2.player_id}/hand", cards: card_backs(7))
-    expect(player2.game_state[:card_locations]).to include a_hash_including(id: "player/#{player1.player_id}/hand", cards: card_backs(7))
+    expect(player1.card_locations).to include a_hash_including(id: "player/#{player2.player_id}/hand", cards: card_backs(7))
+    expect(player2.card_locations).to include a_hash_including(id: "player/#{player1.player_id}/hand", cards: card_backs(7))
 
     server.stop
   end

@@ -34,8 +34,8 @@ module Dealer
       self
     end
 
-    def game_state
-      @game_state.dup.freeze
+    def card_locations
+      @game_state[:card_locations].dup.freeze
     end
   end
 end
