@@ -21,7 +21,11 @@ module Dealer
     end
 
     def move_top_card_to(destination)
-      destination.add_card(@cards.shift)
+      if destination.respond_to?(:each)
+        destination.each(&method(:move_top_card_to))
+      else
+        destination.add_card(@cards.shift)
+      end
       self
     end
 

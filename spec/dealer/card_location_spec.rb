@@ -63,11 +63,9 @@ describe Dealer::CardLocation do
     end
   end
 
-  describe 'moving cards between card locations' do
+  describe 'moving one card between card locations' do
     let(:destination) do
-      described_class
-        .new
-        .show(:front_of_cards, to: player1)
+      described_class.new.show(:front_of_cards, to: player1)
     end
 
     before do
@@ -82,6 +80,30 @@ describe Dealer::CardLocation do
 
     it 'adds the card to the destination' do
       expect(destination.state_view(player1)).to eq('🂡')
+    end
+  end
+
+  describe 'moving two cards between card locations' do
+    let(:destinations) do
+      Array.new(2) { described_class.new.show(:front_of_cards, to: player1) }
+    end
+
+    before do
+      card_location
+        .show(:front_of_cards, to: player1)
+        .move_top_card_to(destinations)
+    end
+
+    it 'removes two cards from the source' do
+      expect(card_location.state_view(player1)).to be_empty
+    end
+
+    it 'adds the first card to the first destination' do
+      expect(destinations[0].state_view(player1)).to start_with('🂡')
+    end
+
+    it 'adds the second card to the second destination' do
+      expect(destinations[1].state_view(player1)).to start_with('🂷')
     end
   end
 end
