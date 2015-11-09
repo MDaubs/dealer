@@ -5,12 +5,9 @@ class GoFish
   include Dealer::DSL
 
   def player_start_game(_)
-    card_location(:deck)
-      .show(:back_of_cards, to: players)
-      .populate(Dealer::Deck.new.cards)
-
     card_location(:ocean)
       .show(:back_of_cards, to: players)
+      .populate(Dealer::Deck.new.cards)
 
     players.each do |player|
       card_location(player, :hand)
@@ -20,7 +17,7 @@ class GoFish
 
     7.times do
       players.each do |player|
-        card_location(:deck)
+        card_location(:ocean)
           .move_top_card_to(card_location(player, :hand))
       end
     end
