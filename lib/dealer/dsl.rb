@@ -31,7 +31,7 @@ module Dealer
       @player_emitter.each do |player, emitter|
         @card_locations.each do |id, location|
           location.state_view(player).tap do |view|
-            emitter.call(:card_location_state, id.join('/'), view) if view
+            emitter.call(:card_location_state, id, view) if view
           end
         end
       end
@@ -44,7 +44,7 @@ module Dealer
     end
 
     def card_location(*id)
-      @card_locations[Array(id)] ||= CardLocation.new
+      @card_locations[Array(id).join('/')] ||= CardLocation.new
     end
   end
 end
