@@ -1,5 +1,6 @@
 require 'dealer/card_location'
 require 'dealer/player'
+require 'json'
 
 module Dealer
   module DSL
@@ -29,11 +30,15 @@ module Dealer
 
     def notify_state
       @player_emitter.each do |player, emitter|
-        @card_locations.each do |id, location|
-          location.state_view(player).tap do |view|
-            emitter.call(:card_location_state, id, view) if view
+        players_view_of_state = {
+          card_locations: @card_locations.map do |id, location|
+            {
+              id: id,
+              cards: location.state_view(player)
+            }
           end
-        end
+        }
+        emitter.call(:update_state, players_view_of_state.to_json)
       end
     end
 

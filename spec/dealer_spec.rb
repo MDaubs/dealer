@@ -11,15 +11,15 @@ describe Dealer do
     sleep 0.1
 
     # Each player sees seven cards in their hand
-    expect(player1.card_locations).to include a_hash_including(id: "player/#{player1.player_id}/hand", cards: card_faces(7))
-    expect(player2.card_locations).to include a_hash_including(id: "player/#{player2.player_id}/hand", cards: card_faces(7))
+    expect(player1.card_locations).to include a_hash_including('id' => "player/#{player1.player_id}/hand", 'cards' => card_faces(7))
+    expect(player2.card_locations).to include a_hash_including('id' => "player/#{player2.player_id}/hand", 'cards' => card_faces(7))
 
     # Each player sees the back of the other players hand
-    expect(player1.card_locations).to include a_hash_including(id: "player/#{player2.player_id}/hand", cards: card_backs(7))
-    expect(player2.card_locations).to include a_hash_including(id: "player/#{player1.player_id}/hand", cards: card_backs(7))
+    expect(player1.card_locations).to include a_hash_including('id' => "player/#{player2.player_id}/hand", 'cards' => card_backs(7))
+    expect(player2.card_locations).to include a_hash_including('id' => "player/#{player1.player_id}/hand", 'cards' => card_backs(7))
 
     # Each player sees the back of the remaining cards in the ocean
-    expect([player1, player2].map(&:card_locations)).to all include a_hash_including(id: 'ocean', cards: card_backs(38))
+    expect([player1, player2].map(&:card_locations)).to all include a_hash_including('id' => 'ocean', 'cards' => card_backs(38))
 
     server.stop
   end
