@@ -15,11 +15,14 @@ class GoFish
         .show(:back_of_cards, to: players)
     end
 
-    7.times do
-      players.each do |player|
-        card_location(:ocean)
-          .move_top_card_to(card_location(player, :hand))
-      end
+    card_location(:ocean).move_top_card_to(player_hands.cycle(7))
+  end
+
+  private
+
+  def player_hands
+    players.map do |player|
+      card_location(player, :hand)
     end
   end
 end
