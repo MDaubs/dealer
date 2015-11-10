@@ -29,7 +29,9 @@ module Dealer
       lambda do |env|
         if Faye::WebSocket.websocket?(env)
           ws = Faye::WebSocket.new(env)
-          player = @game.register_connection { |msg, *args| ws.send([msg, *args].join(':')) }
+          player = @game.register_connection do |message, data|
+            ws.send({ 'name' => message, 'data' => data }.to_json)
+          end
 
           ws.on :message do |event|
             msg, *args = event.data.split(':')

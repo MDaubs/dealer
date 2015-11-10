@@ -11,26 +11,22 @@ module Dealer
 
     def register_connection(&emitter)
       Player.new.tap do |player|
-        @player_emitter.each do |_, existing_emitter|
-          existing_emitter.call(:player_arrived, player)
-        end
         @player_emitter[player] = emitter
-        emitter.call(:player_id, player.id)
+        update(player, player_id: player.id)
+        update_all(players: player)
         player_arrived(player) if respond_to?(:player_arrived)
       end
     end
 
     def deregister_connection(player)
       @player_emitter.remove(player)
-      @player_emitter.each do |_, emitter|
-        emitter.call(:player_left, player)
-      end
+      update_all(players: players)
       player_left(player) if respond_to?(:player_left)
     end
 
     def notify_state
-      @player_emitter.each do |player, emitter|
-        players_view_of_state = {
+      update_all do |player|
+        {
           card_locations: @card_locations.map do |id, location|
             {
               id: id,
@@ -38,11 +34,20 @@ module Dealer
             }
           end
         }
-        emitter.call(:update_state, players_view_of_state.to_json)
       end
     end
 
     private
+
+    def update(player, state)
+      @player_emitter[player].call(:update, state)
+    end
+
+    def update_all(state = nil, &block)
+      players.each do |player|
+        update(player, state || block.call(player))
+      end
+    end
 
     def players
       @player_emitter.keys
