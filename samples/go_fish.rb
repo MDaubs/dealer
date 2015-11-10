@@ -4,7 +4,7 @@ require 'dealer/deck'
 class GoFish
   include Dealer::DSL
 
-  def player_start_game(_)
+  def player_start_game(*_)
     card_location(:ocean)
       .show(:back_of_cards, to: players)
       .populate(Dealer::Deck.new.cards)

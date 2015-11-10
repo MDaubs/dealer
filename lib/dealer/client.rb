@@ -18,8 +18,8 @@ module Dealer
       end
     end
 
-    def take_action(action_name, *args)
-      @ws_client.send([action_name, *args].join(':'))
+    def take_action(message, data = {})
+      @ws_client.send({ 'name' => message, 'data' => data }.to_json)
       self
     end
 

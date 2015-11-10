@@ -34,10 +34,10 @@ module Dealer
           end
 
           ws.on :message do |event|
-            msg, *args = event.data.split(':')
+            message = JSON.parse(event.data)
 
             begin
-              @game.public_send("player_#{msg}", player, *args)
+              @game.public_send("player_#{message['name']}", player, message['data'])
               @game.notify_state
             rescue
               puts $ERROR_INFO
