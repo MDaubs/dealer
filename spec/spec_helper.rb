@@ -15,3 +15,9 @@ end
 RSpec.configure do |c|
   c.include Helpers
 end
+
+RSpec::Matchers.define :a_card_having_rank do |expected_rank|
+  match do |face|
+    Dealer::Card.from_face(face).rank == expected_rank
+  end
+end
