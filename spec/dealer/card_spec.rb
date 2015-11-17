@@ -51,4 +51,14 @@ describe Dealer::Card do
       expect(Dealer::Deck.new.cards.map(&:back)).to all eq('🂠')
     end
   end
+
+  describe '.from_face' do
+    it 'returns a Card with the correct rank' do
+      expect(Dealer::Card.from_face("🂷").rank).to eq(7)
+    end
+
+    it 'returns a Card with the correct suit' do
+      expect(Dealer::Card.from_face("🂷").suit).to eq(:hearts)
+    end
+  end
 end
