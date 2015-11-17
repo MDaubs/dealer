@@ -3,7 +3,7 @@ require_relative '../samples/go_fish'
 
 describe Dealer do
   it 'plays go fish' do
-    server_adapter = Dealer::Adapters::Synchronous::ServerAdapter.new
+    server_adapter = Dealer::Adapters.server(:synchronous).new
     Dealer::Server.new(GoFish.new, server_adapter)
     player1 = Dealer::Client.new(:synchronous, server_adapter)
     player2 = Dealer::Client.new(:synchronous, server_adapter).take_action(:start_game)

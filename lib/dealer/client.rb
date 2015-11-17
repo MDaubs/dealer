@@ -6,7 +6,7 @@ module Dealer
     def initialize(adapter_name, *adapter_args)
       @game_state = {}
 
-      @adapter = Dealer::Adapters[adapter_name].new(*adapter_args) do |message|
+      @adapter = Dealer::Adapters.client(adapter_name).new(*adapter_args) do |message|
         message = JSON.parse(message)
 
         if message['name'] == 'update'
