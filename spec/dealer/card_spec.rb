@@ -16,6 +16,26 @@ describe Dealer::Card do
     end
   end
 
+  describe '#has_rank?' do
+    it 'returns true if the card has the specified rank provided as integer or symbol' do
+      Dealer::Deck.new.cards.each do |card|
+        expect(card).to have_rank(card.rank)
+      end
+    end
+
+    it 'returns true if the card has the specified rank provided as a string' do
+      Dealer::Deck.new.cards.each do |card|
+        expect(card).to have_rank(card.rank.to_s)
+      end
+    end
+
+    it 'returns false if the card does not have the specified rank' do
+      Dealer::Deck.new.cards.select { |c| c.suit == :diamonds }.combination(2).each do |card1, card2|
+        expect(card1).to_not have_rank(card2.rank)
+      end
+    end
+  end
+
   describe '#front' do
     it 'returns ace of spades as 🂡' do
       expect(described_class.new([:ace, :spades]).front).to eq('🂡')

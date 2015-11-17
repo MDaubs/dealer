@@ -63,7 +63,7 @@ describe Dealer::CardLocation do
     end
   end
 
-  describe 'moving one card between card locations' do
+  describe 'moving top card to another card location' do
     let(:destination) do
       described_class.new.show(:front_of_cards, to: player1)
     end
@@ -83,7 +83,7 @@ describe Dealer::CardLocation do
     end
   end
 
-  describe 'moving two cards between card locations' do
+  describe 'moving top cards to two card locations' do
     let(:destinations) do
       Array.new(2) { described_class.new.show(:front_of_cards, to: player1) }
     end
@@ -104,6 +104,36 @@ describe Dealer::CardLocation do
 
     it 'adds the second card to the second destination' do
       expect(destinations[1].state_view(player1)).to start_with('🂷')
+    end
+  end
+
+  describe 'moving cards with a specified rank to another card location' do
+    let(:destination) { described_class.new.show(:front_of_cards, to: player1) }
+
+    subject(:source) { card_location.show(:front_of_cards, to: player1) }
+
+    context 'when a card exists in the source with the specified rank' do
+      before do
+        @return_value = source.move_cards_with_rank(7, to: destination)
+      end
+
+      it 'removes the 7 of hearts from the source' do
+        expect(card_location.state_view(player1)).to_not include('🂷')
+      end
+
+      it 'adds the 7 of hearts to the destination' do
+        expect(destination.state_view(player1)).to include('🂷')
+      end
+
+      it 'returns true' do
+        expect(@return_value).to be true
+      end
+    end
+
+    context 'when no cards exist in the source with the specified rank' do
+      it 'returns false' do
+        expect(source.move_cards_with_rank(3, to: destination)).to be false
+      end
     end
   end
 end

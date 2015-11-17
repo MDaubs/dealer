@@ -29,6 +29,14 @@ module Dealer
       self
     end
 
+    def move_cards_with_rank(rank, to:)
+      @cards
+        .select { |c| c.has_rank?(rank) }
+        .each(&to.method(:add_card))
+        .each(&@cards.method(:delete))
+        .any?
+    end
+
     def populate(cards)
       @cards = cards
       self

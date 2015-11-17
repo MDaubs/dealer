@@ -7,6 +7,10 @@ module Dealer
       @rank = rank
     end
 
+    def has_rank?(other_rank)
+      rank.to_s == other_rank.to_s
+    end
+
     def hash
       [suit, rank].join.hash
     end
