@@ -49,6 +49,12 @@ module Dealer
       end
     end
 
+    def player_by_id(player_id)
+      players.find do |player|
+        player.id == player_id
+      end
+    end
+
     def players
       @player_emitter.keys
     end

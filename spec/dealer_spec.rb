@@ -3,12 +3,10 @@ require_relative '../samples/go_fish'
 
 describe Dealer do
   it 'plays go fish' do
-    server = Dealer::Server.new(GoFish.new, 9292).start
-    sleep 0.1
-    player1 = Dealer::Client.new('ws://localhost:9292/')
-    sleep 0.1
-    player2 = Dealer::Client.new('ws://localhost:9292/').take_action(:start_game)
-    sleep 0.1
+    server_adapter = Dealer::Adapters::Synchronous::ServerAdapter.new
+    Dealer::Server.new(GoFish.new, server_adapter)
+    player1 = Dealer::Client.new(Dealer::Adapters::Synchronous::ClientAdapter, server_adapter)
+    player2 = Dealer::Client.new(Dealer::Adapters::Synchronous::ClientAdapter, server_adapter).take_action(:start_game)
 
     # Each player sees seven cards in their hand
     expect(player1.card_locations).to include a_hash_including('id' => "player/#{player1.player_id}/hand", 'cards' => card_faces(7))

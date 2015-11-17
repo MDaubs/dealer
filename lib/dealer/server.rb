@@ -1,58 +1,18 @@
-require 'faye/websocket'
-require 'rack'
-require 'thin'
-
 module Dealer
   class Server
-    def initialize(game, port)
-      @game = game
-      @port = port
-      @emitters = {}
-    end
+    def initialize(game, adapter)
+      player_by_connection = {}
 
-    def start
-      @ws_thread = Thread.new do
-        Faye::WebSocket.load_adapter('thin')
-        Rack::Handler.get('thin').run(rack_app, Port: @port)
-      end
-      self
-    end
-
-    def stop
-      @ws_thread.kill
-      self
-    end
-
-    private
-
-    def rack_app
-      lambda do |env|
-        if Faye::WebSocket.websocket?(env)
-          ws = Faye::WebSocket.new(env)
-          player = @game.register_connection do |message, data|
-            ws.send({ 'name' => message, 'data' => data }.to_json)
-          end
-
-          ws.on :message do |event|
-            message = JSON.parse(event.data)
-
-            begin
-              @game.public_send("player_#{message['name']}", player, message['data'])
-              @game.notify_state
-            rescue
-              puts $ERROR_INFO
-              puts $ERROR_INFO.backtrace
-            end
-          end
-
-          ws.on :close do
-            @game.remove_player(player)
-          end
-
-          ws.rack_response
-        else
-          [200, { 'Content-Type' => 'text/plain' }, ["Dealer #{Dealer::VERSION}"]]
+      adapter.on_connect do |connection|
+        player_by_connection[connection] = game.register_connection do |message, data|
+          connection.send_to_client({ name: message, data: data }.to_json)
         end
+      end
+
+      adapter.on_message do |connection, message|
+        message = JSON.parse(message)
+        game.public_send("player_#{message['name']}", player_by_connection[connection], message['data'])
+        game.notify_state
       end
     end
   end

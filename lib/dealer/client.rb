@@ -3,23 +3,22 @@ require 'json'
 
 module Dealer
   class Client
-    def initialize(uri)
+    def initialize(adapter_class, *adapter_args)
       @game_state = {}
-      @ws_client = Faye::WebSocket::Client.new(uri)
 
-      @ws_client.on :message do |event|
-        JSON.parse(event.data).tap do |message|
-          if message['name'] == 'update'
-            @game_state.merge!(message['data'])
-          else
-            raise "Unable to process message: #{message}"
-          end
+      @adapter = adapter_class.new(*adapter_args) do |message|
+        message = JSON.parse(message)
+
+        if message['name'] == 'update'
+          @game_state.merge!(message['data'])
+        else
+          raise "Unable to process message: #{message}"
         end
       end
     end
 
     def take_action(message, data = {})
-      @ws_client.send({ 'name' => message, 'data' => data }.to_json)
+      @adapter << { 'name' => message, 'data' => data }.to_json
       self
     end
 
