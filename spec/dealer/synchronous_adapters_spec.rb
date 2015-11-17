@@ -11,8 +11,8 @@ describe 'synchronous adapters' do
       end
     end
 
-    Dealer::Adapters::Synchronous::ClientAdapter.new(server_adapter) {} << 'foo bar baz'
-    Dealer::Adapters::Synchronous::ClientAdapter.new(server_adapter) {} << 'baz foo bar'
+    Dealer::Adapters[:synchronous].new(server_adapter) {} << 'foo bar baz'
+    Dealer::Adapters[:synchronous].new(server_adapter) {} << 'baz foo bar'
 
     expect(messages_received_by_client.values).to contain_exactly ['foo bar baz'], ['baz foo bar']
   end
@@ -23,8 +23,8 @@ describe 'synchronous adapters' do
     clients = []
 
     Dealer::Adapters::Synchronous::ServerAdapter.new.on_connect(&clients.method(:push)).tap do |server_adapter|
-      Dealer::Adapters::Synchronous::ClientAdapter.new(server_adapter, &messages_received_by_client1.method(:push))
-      Dealer::Adapters::Synchronous::ClientAdapter.new(server_adapter, &messages_received_by_client2.method(:push))
+      Dealer::Adapters[:synchronous].new(server_adapter, &messages_received_by_client1.method(:push))
+      Dealer::Adapters[:synchronous].new(server_adapter, &messages_received_by_client2.method(:push))
     end
 
     clients[0].send_to_client 'foo bar baz'

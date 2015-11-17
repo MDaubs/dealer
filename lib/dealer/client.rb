@@ -3,10 +3,10 @@ require 'json'
 
 module Dealer
   class Client
-    def initialize(adapter_class, *adapter_args)
+    def initialize(adapter_name, *adapter_args)
       @game_state = {}
 
-      @adapter = adapter_class.new(*adapter_args) do |message|
+      @adapter = Dealer::Adapters[adapter_name].new(*adapter_args) do |message|
         message = JSON.parse(message)
 
         if message['name'] == 'update'
